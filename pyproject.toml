@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "Representation of Deep Semantic Attributes in Sentence Embeddings"
+version = "0.1.0"
+description = "This repository explores whether modern sentence embedding methods explicitly encode continuous semantic features within their geometric space."
+authors = ["Natalia Kuzminykh <natalia.kuzminykh@plymouth.ac.uk>"]
+readme = "README.md"
+
+packages = [{ include = "src", from = "." }]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+datasets = "^3.6.0"
+structlog = "^25.4.0"
+torch = "^2.6.0"
+openpyxl = "^3.1.5"
+accelerate = "^1.6.0"
+autoawq = "^0.2.8"
+slack-sdk = "^3.35.0" #Optional dependency for Slack integration
+sentence-transformers = "^4.1.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

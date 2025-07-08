@@ -1,0 +1,19 @@
+models:
+  - "google-bert/bert-large-uncased"
+  - "sentence-transformers/all-mpnet-base-v2"
+  # - add more models as needed
+mode:
+  - "danger" # default
+  #- "size"
+
+methods:
+  - "cls_pooling_st" # CLS pooling
+  - "max_pooling_st" # Max pooling
+  - "mean_pooling_st" # default sentence-transformers method
+  - "mean_sqrt_len_pooling_st" # Mean pooling with square root length normalization
+  - "weightedmean_pooling_st" # Weighted mean pooling
+  - "lasttoken_pooling_st" # Last token pooling
+
+datasets:
+  #- "size" # Size dataset
+  - "danger" # Danger dataset
