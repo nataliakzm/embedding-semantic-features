@@ -80,12 +80,7 @@ Embeddings will be written to `src/data/` and the evaluation summary appended to
 If you use this code or reproduce the experiments, please cite:
 
 ```
-@article{Kuzminykh2024DeepSemanticAttributes,
-  title={Representation of Deep Semantic Attributes in Sentence Embeddings},
-  author={Natalia Kuzminykh},
-  year={2024},
-  note={Repository: https://github.com/your-org/embedding-semantic-features}
-}
+....
 ```
 
 ## Notes
