@@ -1,6 +1,6 @@
 # Embedding Semantic Features
 
-This project evaluates whether modern sentence embedding models explicitly encode continuous semantic attributes such as *danger* or *size*. A set of sentence pairs is embedded using several pooling strategies from the [SentenceTransformers](https://www.sbert.net/) library. The resulting vectors are analysed to see if the contrast between two groups (e.g. safe vs. dangerous) can be recovered by a simple geometric projection.
+This repository accompanies the article **"Representation of Deep Semantic Attributes in Sentence Embeddings"**. It contains the code used to examine whether modern sentence embedding models explicitly encode continuous semantic attributes such as *danger* or *size*. A set of sentence pairs is embedded using several pooling strategies from the [SentenceTransformers](https://www.sbert.net/) library and the resulting vectors are analysed to determine if the contrast between two groups (e.g. safe vs. dangerous) can be recovered by a simple geometric projection.
 
 ## Overview
 
@@ -74,6 +74,19 @@ python main.py \
 ```
 
 Embeddings will be written to `src/data/` and the evaluation summary appended to `output.yaml`.
+
+## Citing this work
+
+If you use this code or reproduce the experiments, please cite:
+
+```
+@article{Kuzminykh2024DeepSemanticAttributes,
+  title={Representation of Deep Semantic Attributes in Sentence Embeddings},
+  author={Natalia Kuzminykh},
+  year={2024},
+  note={Repository: https://github.com/your-org/embedding-semantic-features}
+}
+```
 
 ## Notes
 
