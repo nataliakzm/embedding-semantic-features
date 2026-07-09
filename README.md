@@ -1,6 +1,11 @@
 # Embedding Semantic Features
 
-This repository accompanies the article **"Representation of Deep Semantic Attributes in Sentence Embeddings"**. It contains the code used to examine whether modern sentence embedding models explicitly encode continuous semantic attributes such as *danger* or *size*. A set of sentence pairs is embedded using several pooling strategies from the [SentenceTransformers](https://www.sbert.net/) library and the resulting vectors are analysed to determine if the contrast between two groups (e.g. safe vs. dangerous) can be recovered by a simple geometric projection.
+This repository accompanies the article **"Representation of Deep Semantic Attributes in Sentence Embeddings"**. It contains the code used to examine whether modern sentence embedding models explicitly encode continuous semantic attributes such as *danger* or *size*.
+
+The repository supports the paper's **two complementary experiments**:
+
+1. **Semantic-axis projection** (`main.py`) — a set of sentence pairs is embedded using several pooling strategies from the [SentenceTransformers](https://www.sbert.net/) library and analysed to determine if the contrast between two word groups (e.g. safe vs. dangerous) can be recovered by a simple geometric projection.
+2. **Learned neural networks** (`train_nn.py`, `train_multi_layer_nn.py`) — single- and multi-layer classifiers are trained on the labeled **CS** (common-sense) and **JS** (justice) datasets, and their learned weights are compared back against the semantic axes. See [Neural-Network Experiments](#neural-network-experiments) and [`data/README.md`](data/README.md).
 
 ## Overview
 
@@ -74,6 +79,50 @@ python main.py \
 ```
 
 Embeddings will be written to `src/data/` and the evaluation summary appended to `output.yaml`.
+
+## Datasets
+
+The neural-network experiments use two labeled binary-classification datasets, split
+into training and testing sub-parts, under [`data/`](data/):
+
+- **CS** — common-sense / morality (`data/CS/`)
+- **JS** — justice (`data/JS/`)
+
+Both are derived from the **ETHICS** benchmark (Hendrycks et al., ICLR 2021,
+[arXiv:2008.02275](https://arxiv.org/abs/2008.02275),
+[github.com/hendrycks/ethics](https://github.com/hendrycks/ethics)) and are provided
+both as human-browsable CSV (`cm_train.csv` / `cm_test.csv`) and as the Python list
+files the loader imports. See [`data/README.md`](data/README.md) for the layout, sizes,
+label convention, and citation.
+
+## Neural-Network Experiments
+
+These reproduce the paper's *learned representation* experiments: a classifier is trained
+on the CS/JS embeddings, then its weights are compared against the semantic axes (cosine
+similarity, rank-order, geometric separability, ridge probe, PCA).
+
+- **`train_nn.py`** – single-layer network (`N inputs → 1 output`), defined in
+  `src/n_networks/single_layer_nn.py`.
+- **`train_multi_layer_nn.py`** – multi-layer network (`N → 500 → 250 → 1`), defined in
+  `src/n_networks/multi_layer_nn.py`.
+- **`src/analysis/`** – weight-vs-axis comparison, separation metrics, ridge probe and PCA.
+- **`src/embd_model.py`**, **`src/configure.py`**, **`src/save_embds.py`** – embedding
+  generation, YAML config loading, and Excel export used by both scripts.
+
+Configure the run in [`config_nn.yaml`](config_nn.yaml) (model, dataset `cs`/`js`,
+hyperparameters, and the semantic axes to compare against), then:
+
+```bash
+python train_nn.py --config config_nn.yaml              # single-layer
+python train_multi_layer_nn.py --config config_nn.yaml  # multi-layer
+```
+
+The defaults reproduce the paper with `Qwen/Qwen3-Embedding-8B` (needs a GPU and a large
+download). For a quick CPU smoke-test, set the model to
+`sentence-transformers/all-MiniLM-L6-v2` with `pooling: mean` (see the header of
+`config_nn.yaml`). Results are written to `nn_results/` (single-layer) and
+`nn_multi_layer_results/` (multi-layer); generated embeddings are cached and reused
+across the two scripts.
 
 ## Citing this work
 
