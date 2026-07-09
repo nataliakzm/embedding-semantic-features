@@ -21,11 +21,18 @@ HF_TOKEN = creds.get("HF_TOKEN")
 OUTPUT_YAML = creds.get("OUTPUT_YAML", "output.yaml")
 SLACK_BOT_TOKEN = creds.get("SLACK_BOT_TOKEN")
 SLACK_CHANNEL = creds.get("SLACK_CHANNEL")
-slack_client = WebClient(token=SLACK_BOT_TOKEN)
+
+# Slack is optional: it is only active when real credentials are supplied.
+# A missing token or the placeholder from the sample credentials.yaml leaves it
+# disabled so cloning + running the experiments never requires Slack setup.
+SLACK_ENABLED = bool(SLACK_BOT_TOKEN) and str(SLACK_BOT_TOKEN).startswith("xox")
+slack_client = WebClient(token=SLACK_BOT_TOKEN) if SLACK_ENABLED else None
 
 
 def send_slack_notification(message):
-    """Send a notification to Slack channel via Slack Web API with retry logic."""
+    """Send a notification to Slack with retry logic; no-op if Slack is not configured."""
+    if not SLACK_ENABLED:
+        return
     for attempt in range(3):
         try:
             slack_client.chat_postMessage(channel=SLACK_CHANNEL, text=message)

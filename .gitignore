@@ -134,6 +134,10 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
+# Neural-network experiment outputs (train_nn.py / train_multi_layer_nn.py)
+nn_results/
+nn_multi_layer_results/
+
 # Environments
 .env
 .envrc
