@@ -17,6 +17,13 @@ accelerate = "^1.6.0"
 autoawq = "^0.2.8"
 slack-sdk = "^3.35.0" #Optional dependency for Slack integration
 sentence-transformers = "^4.1.0"
+# --- Neural-network experiments (train_nn.py / train_multi_layer_nn.py) ---
+numpy = "^2.0.0"
+scikit-learn = "^1.5.0"
+scipy = "^1.13.0"
+pandas = "^2.2.0"
+pyyaml = "^6.0.0"
+python-dotenv = "^1.0.0"
 
 
 [build-system]

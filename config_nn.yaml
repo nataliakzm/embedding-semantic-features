@@ -1,0 +1,150 @@
+# =============================================================================
+# Neural Network Training Configuration (single- and multi-layer experiments)
+# =============================================================================
+# Usage:
+#   python train_nn.py --config config_nn.yaml              # single-layer
+#   python train_multi_layer_nn.py --config config_nn.yaml  # multi-layer
+#
+# The defaults below reproduce the paper (Qwen/Qwen3-Embedding-8B, ~4096-dim,
+# lasttoken pooling) and therefore need a GPU and a large model download.
+#
+# QUICK START (smoke-test without the 8B model): set
+#     model.name: "sentence-transformers/all-MiniLM-L6-v2"
+#     model.pooling: "mean"
+# This runs on CPU in minutes; numbers will differ from the paper but exercise
+# the full pipeline end-to-end. Switch data.dataset between "cs" and "js".
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Model Configuration
+# -----------------------------------------------------------------------------
+model:
+  # Model name from HuggingFace (sentence-transformers compatible)
+  name: "Qwen/Qwen3-Embedding-8B"
+  
+  # Pooling mode for generating sentence embeddings
+  # Options:
+  #   - "mean": Average all token embeddings (default, for encoder models)
+  #   - "lasttoken": Use last token embedding (for decoder models like Llama)
+  pooling: "lasttoken"
+
+
+# -----------------------------------------------------------------------------
+# Data Configuration
+# -----------------------------------------------------------------------------
+data:
+  # Dataset to use
+  # Options:
+  #   - "cs": Common Sense (data/CS/) — csense0/csense1 sentence pairs
+  #   - "js": Justified Sentiments (data/JS/) — jsense0/jsense1 sentence pairs
+  dataset: "js"
+  
+  # Random seed for reproducibility
+  random_seed: 42
+  
+  # Whether to normalize embeddings to unit vectors
+  normalize_embeddings: true
+
+  # Shuffle train/test sentence order (preserves sentence-label pairing)
+  # Set true to break class-blocked ordering; false keeps csense0 then csense1
+  shuffle: false
+
+# -----------------------------------------------------------------------------
+# Hardware Configuration
+# -----------------------------------------------------------------------------
+# Device to use for computation
+# Options: "auto", "cpu", "cuda", "cuda:0", "cuda:1", etc.
+device: "auto"
+
+# -----------------------------------------------------------------------------
+# Training Hyperparameters (Single-Layer NN)
+# -----------------------------------------------------------------------------
+training:
+  # Number of training epochs
+  epochs: 1000
+
+  # Learning rate for gradient descent
+  learning_rate: 0.01
+
+  # Mini-batch size
+  batch_size: 32
+
+  # Print progress every N epochs (0 to disable)
+  verbose_every: 100
+
+  # Early stopping patience (0 to disable)
+  # Stop training if validation accuracy doesn't improve for N epochs
+  patience: 100
+
+  # L2 regularization (weight decay) - helps prevent overfitting
+  # Set to 0 to disable
+  l2_lambda: 0
+
+# -----------------------------------------------------------------------------
+# Multi-Layer NN Configuration (for train_multi_layer_nn.py)
+# -----------------------------------------------------------------------------
+multi_layer:
+  # Architecture: input_dim -> hidden1 -> hidden2 -> output
+  # Uses same embeddings from model above to avoid regeneration
+
+  # Training parameters (different from single-layer)
+  learning_rate: 0.001  # Lower LR for deeper network
+  epochs: 1000          # More epochs for deeper network
+  batch_size: 32        # Larger batch size for stability
+  verbose_every: 100    # Progress update frequency
+
+  # Early stopping patience (0 to disable)
+  # Stop training if validation accuracy doesn't improve for N epochs
+  # Recommended: ~10% of epochs (e.g., 200 for 2000 epochs)
+  patience: 200
+
+  # Hidden layer dimensions
+  hidden1_dim: 500      # First compression: 4096 -> 500
+  hidden2_dim: 250      # Second compression: 500 -> 250
+  dropout: 0.3          # Dropout rate to prevent overfitting
+
+# -----------------------------------------------------------------------------
+# Semantic Axes Configuration
+# -----------------------------------------------------------------------------
+# Define multiple semantic axes to compare against NN weights.
+# The NN trains once, then compares its weights against all axes.
+semantic_axes:
+  # --- Common-sense framing---
+  - name: "kind_cruel"
+    group1: ["This is kind behavior", "This action is honest", "This is decent conduct"]
+    group2: ["This is cruel behavior", "This action is dishonest", "This is indecent conduct"]
+
+  # --- Justified vs. Unjustified---
+  #- name: "justified_unjustified"
+  #  group1: ["The reason given would actually cause this kind of change", "This is the type of explanation that justifies breaking a routine", "The cause is relevant to the outcome described"]
+  #  group2: ["The reason given would not actually cause this kind of change", "This is not the type of explanation that justifies breaking a routine", "The cause is not relevant to the outcome described"]
+
+# -----------------------------------------------------------------------------
+# Output Configuration
+# -----------------------------------------------------------------------------
+output:
+  # Directory to save results (single-layer NN)
+  dir: "nn_results"
+
+  # Directory for multi-layer NN results
+  multi_layer_dir: "nn_multi_layer_results"
+
+  # What to save
+  save_weights: true
+  save_axis: true
+  save_history: true
+  save_embeddings: true
+
+# -----------------------------------------------------------------------------
+# Ridge Probe Configuration (Gurnee & Tegmark, 2024)
+# -----------------------------------------------------------------------------
+ridge_probe:
+  enabled: true
+  alpha: 1.0  # Ridge regularization strength
+
+# -----------------------------------------------------------------------------
+# PCA Dimensionality Analysis (Gurnee & Tegmark, 2024)
+# -----------------------------------------------------------------------------
+pca_analysis:
+  enabled: true
+  k_values: [50, 100, 250, 500, 1000, 2000]
