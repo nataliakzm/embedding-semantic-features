@@ -2,7 +2,7 @@
 name = "Representation of Deep Semantic Attributes in Sentence Embeddings"
 version = "0.1.0"
 description = "This repository explores whether modern sentence embedding methods explicitly encode continuous semantic features within their geometric space."
-authors = ["Natalia Kuzminykh <natalia.kuzminykh@plymouth.ac.uk>"]
+authors = ["Anonymous <anonymous@example.com>"]
 readme = "README.md"
 
 packages = [{ include = "src", from = "." }]
